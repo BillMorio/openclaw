@@ -178,9 +178,10 @@ async function generateImage(channelHandle, videoData) {
     </html>
     `;
 
-    // 2. Launch Puppeteer and take screenshot
+    // 2. Launch Puppeteer and take screenshot (ensure system chromium is used on VPS)
     const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        executablePath: '/usr/bin/chromium',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
     });
     
     const page = await browser.newPage();
@@ -232,7 +233,7 @@ async function scrapeChannel() {
             
             // Provide the output to the Bot!
             console.log(`\nHere is the dashboard for ${formattedHandle}:`);
-            console.log(`MEDIA: ${imagePath}`);  // <--- The magic attachment command!
+            console.log(`MEDIA:${imagePath}`);  // <--- The magic attachment command!
             console.log(`\nTop videos retrieved:`);
             recentVideos.slice(0, 3).forEach(v => console.log(`- ${v.title} (${v.viewCount?.toLocaleString()} views)`));
             
