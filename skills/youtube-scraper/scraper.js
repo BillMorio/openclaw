@@ -190,8 +190,13 @@ async function generateImage(channelHandle, videoData) {
     // Set the HTML content
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     
-    // Determine output path (in the same directory as the script)
-    const outputPath = path.join(__dirname, `report_${channelHandle.replace('@', '')}.png`);
+    // Determine output path (in the OpenClaw workspace directory to pass security sandbox)
+    const os = require('os');
+    const workspaceDir = path.join(os.homedir(), '.openclaw', 'workspace');
+    if (!fs.existsSync(workspaceDir)) {
+        fs.mkdirSync(workspaceDir, { recursive: true });
+    }
+    const outputPath = path.join(workspaceDir, `report_${channelHandle.replace('@', '')}.png`);
     
     // Snapshot the specific dashboard element for a clean crop
     const element = await page.$('.dashboard');
